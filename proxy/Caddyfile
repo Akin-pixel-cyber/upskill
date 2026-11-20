@@ -1,0 +1,19 @@
+# SITE_ADDRESS decides everything (set in .env):
+#   :8080                  -> plain HTTP on port 8080 (default; use http://<server-ip>:8080)
+#   upskill.example.com    -> automatic HTTPS via Let's Encrypt on ports 80/443
+{$SITE_ADDRESS::8080} {
+	handle /api/* {
+		reverse_proxy api:4000
+	}
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+	encode gzip
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy same-origin
+	}
+}
